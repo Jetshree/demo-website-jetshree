@@ -1,0 +1,67 @@
+---
+title: System Configuration
+description: Configure the NSB Daemon via YAML for your simulation setup.
+---
+
+The NSB Daemon is configured through a **YAML file** passed as its first argument at startup. This file controls how the daemon routes messages and how clients connect.
+
+---
+
+## Example Configuration File
+
+```yaml
+# config.yaml
+
+daemon:
+  host: "127.0.0.1"
+  port: 65432
+
+redis:
+  host: "127.0.0.1"
+  port: 5050
+
+system_mode: 0       # 0 = PULL, 1 = PUSH
+simulator_mode: 0    # 0 = System-Wide, 1 = Per-Node
+```
+
+---
+
+## System Mode
+
+Controls how the NSB Daemon delivers messages to clients.
+
+| Value | Mode | Description |
+|---|---|---|
+| `0` | **PULL** | Clients poll the daemon for new messages. Recommended for most setups. |
+| `1` | **PUSH** | Daemon proactively forwards messages to clients. Lower latency, but requires stable connections. |
+
+> **Recommendation:** Start with `PULL` mode. Switch to `PUSH` only if latency is a hard requirement and your network is stable.
+
+---
+
+## Simulator Mode
+
+Controls how the simulator client is matched to nodes.
+
+| Value | Mode | Description |
+|---|---|---|
+| `0` | **System-Wide** | A single `NsbSimClient` handles all nodes (e.g., ns-3 global scheduler). |
+| `1` | **Per-Node** | Each simulated node has its own `NsbSimClient` instance (e.g., OMNeT++ per-module). |
+
+---
+
+## Redis Configuration
+
+NSB uses Redis as its message store. Ensure the Redis server is running before starting the daemon. Configure the host and port to match your Redis instance.
+
+```yaml
+redis:
+  host: "127.0.0.1"
+  port: 5050
+```
+
+Start Redis on that port with:
+
+```bash
+redis-server --port 5050
+```

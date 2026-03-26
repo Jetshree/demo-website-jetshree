@@ -1,0 +1,75 @@
+---
+title: Running Your System
+description: Step-by-step guide to starting the full NSB ecosystem.
+---
+
+Once everything is installed and configured, you can start the NSB ecosystem. The components must be started **in this order**: the daemon requires Redis to be ready before it starts, and your application/simulator require the daemon to be running.
+
+---
+
+## Step 1: Start Redis
+
+Redis is NSB's message store. Start it on the port defined in your config file:
+
+```bash
+redis-server --port 5050
+```
+
+Verify it's running:
+
+```bash
+redis-cli -p 5050 ping
+# Expected output: PONG
+```
+
+---
+
+## Step 2: Start the NSB Daemon
+
+Launch the daemon with your configuration file:
+
+```bash
+./build/nsb_daemon config.yaml
+```
+
+You should see output similar to:
+
+```
+[NSB Daemon] Listening on 127.0.0.1:65432
+[NSB Daemon] Connected to Redis at 127.0.0.1:5050
+[NSB Daemon] Ready.
+```
+
+---
+
+## Step 3: Start Your Network Simulator
+
+Start your modified simulator (e.g., ns-3, OMNeT++). It should initialize its `NsbSimClient` and wait for payloads.
+
+```bash
+# Example: ns-3 simulation script
+./waf --run "your-sim-script"
+```
+
+---
+
+## Step 4: Run Your Application
+
+With all services running, start your application. It will connect via `NsbAppClient` and begin exchanging messages through the simulation.
+
+```bash
+python3 your_app.py
+```
+
+---
+
+## Troubleshooting
+
+| Symptom | Likely Cause | Fix |
+|---|---|---|
+| Daemon fails to start | Redis not running | Start Redis first |
+| `ConnectionRefused` in client | Wrong host/port in config | Check `config.yaml` |
+| Messages never delivered | Simulator not connected | Verify `NsbSimClient` initialization |
+| Slow throughput | `PULL` polling too slow | Tune poll interval or switch to `PUSH` mode |
+
+> **Tip:** Run each component in a separate terminal tab for easier debugging.

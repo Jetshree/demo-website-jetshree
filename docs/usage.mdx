@@ -1,0 +1,86 @@
+---
+title: Basic Usage
+description: How to use NsbAppClient and NsbSimClient in Python and C++.
+---
+
+NSB provides two client interfaces that work together to bridge your application and your network simulator.
+
+- **`NsbAppClient`**: Used by your application to send and receive messages
+- **`NsbSimClient`**: Used by your network simulator to fetch outbound messages and post delivered ones
+
+---
+
+## NsbAppClient
+
+The Application Client presents as a simplified network socket. Your application connects to the NSB Daemon and exchanges messages with other nodes.
+
+### Python
+
+```python
+import nsb_client as nsb
+
+# Connect: node ID, daemon host, daemon port
+nsb_app = nsb.NSBAppClient("node0", "127.0.0.1", 65432)
+
+# Send a payload to another node
+nsb_app.send("node1", b"Hello, node1!")
+
+# Block until a message arrives
+incoming = nsb_app.receive()
+print(f"Received: {incoming.payload} from {incoming.src_id}")
+```
+
+### C++
+
+```cpp
+#include "nsb_client.h"
+
+// Connect: node ID, daemon host, daemon port
+nsb::NSBAppClient nsbApp("node0", "127.0.0.1", 65432);
+
+// Send a payload to another node
+nsbApp.send("node1", "Hello, node1!");
+
+// Block until a message arrives
+nsb::MessageEntry incoming = nsbApp.receive();
+```
+
+---
+
+## NsbSimClient
+
+The Simulator Client is integrated into your network simulator. It fetches messages that need to be routed, applies your simulator's delay/loss model, and posts them when they arrive at the destination.
+
+### Python
+
+```python
+import nsb_client as nsb
+
+nsb_sim = nsb.NSBSimClient("sim0", "127.0.0.1", 65432)
+
+# Fetch the next payload waiting to be routed
+payload = nsb_sim.fetch()
+
+# ... apply your simulator's routing/delay logic here ...
+
+# Post the delivered payload
+nsb_sim.post(payload, src_id="node0", dest_id="node1")
+```
+
+### C++
+
+```cpp
+#include "nsb_client.h"
+
+nsb::NSBSimClient nsbSim("sim0", "127.0.0.1", 65432);
+
+// Fetch next payload
+nsb::PayloadEntry payload = nsbSim.fetch();
+
+// Apply delay / routing logic ...
+
+// Deliver payload
+nsbSim.post(payload, "node0", "node1");
+```
+
+> **Tip:** `fetch()` returns `nullptr` / `None` when no payload is queued. Poll in a loop or use a blocking variant if available.

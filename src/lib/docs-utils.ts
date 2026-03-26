@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
-const DOCS_DIRECTORY = path.join(process.cwd(), '../nsb/docs');
+const DOCS_DIRECTORY = path.join(process.cwd(), 'docs');
 
 export interface DocMetadata {
   title: string;

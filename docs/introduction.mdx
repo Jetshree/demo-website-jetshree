@@ -1,0 +1,43 @@
+---
+title: Introduction
+description: What is NSB and why does it exist?
+---
+
+NSB (**Network Simulation Bridge**) is a lightweight, low-overhead pipeline that connects real applications to network simulators. It acts as a transparent bridge: your application code sends and receives messages as if over a real network, while a simulator handles the actual routing, delay, and packet loss behind the scenes.
+
+
+## Why NSB?
+
+
+Traditional network co-simulation setups require deep coupling between application logic and simulator internals. NSB decouples these concerns completely:
+
+- **Application-agnostic:** Works with any language or framework that can call a library
+- **Simulator-agnostic:** Compatible with ns-3, OMNeT++, and others
+- **Platform-agnostic:** Runs on Linux, macOS, and more
+- **Minimal overhead:** Built on Redis for high-throughput, low-latency message passing
+
+
+## How It Works
+
+NSB operates through three core components:
+
+1. **NSB Daemon:** A persistent server process managing message routing between clients
+2. **NsbAppClient:** A library your application calls to send/receive messages
+3. **NsbSimClient:** A library your network simulator calls to fetch and deliver messages
+
+```
+Application  ──→  NsbAppClient  ──→  NSB Daemon  ──→  NsbSimClient  ──→  Simulator
+```
+
+The daemon stores messages in a **Redis** backend and ensures they flow between the two sides with configurable delay and loss parameters applied by the simulator.
+
+
+
+## Research Background
+
+NSB was created to address real research needs at the [Inter-Networking Research Group](https://inrg.engineering.ucsc.edu/) at the University of California, Santa Cruz. Early use cases included:
+
+- **Decentralized federated learning** over simulated lossy networks
+- **Autonomous vehicle platooning** with realistic communication delays
+
+> Core development is active as of early 2026. We welcome collaborators, feedback, and new use cases!
