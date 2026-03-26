@@ -2,6 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
+// OLD PATH (caused Vercel 404s because it was outside the repo):
+// const DOCS_DIRECTORY = path.join(process.cwd(), '../nsb/docs');
+
+// NEW PATH (fetches exactly from the local nsb-website/docs folder):
 const DOCS_DIRECTORY = path.join(process.cwd(), 'docs');
 
 export interface DocMetadata {
