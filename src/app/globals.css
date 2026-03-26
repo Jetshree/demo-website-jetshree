@@ -1,26 +1,249 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #020617;
+  --primary: #7c3aed;
+  --primary-foreground: #ffffff;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --ring: rgba(124, 58, 237, 0.2);
+  --nsb-code-bg: #f8fafc;
+  --nsb-code-border: #e2e8f0;
+  --nsb-code-text: #334155;
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #f8fafc;
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --border: #334155;
+  --ring: rgba(139, 92, 246, 0.3);
+  --nsb-code-bg: #0b0b0f;
+  --nsb-code-border: #1e293b;
+  --nsb-code-text: #cbd5e1;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  @keyframes border-beam {
+    100% {
+      offset-distance: 100%;
+    }
+  }
+  @keyframes shine-pulse {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    to {
+      background-position: 0% 0%;
+    }
+  }
+  --animate-shine-pulse: shine-pulse var(--shine-pulse-duration) infinite linear;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
+
+/* Glassmorphism Classes */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #8b5cf6 0%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Docs: Base Typography ───────────────────────────── */
+.mdx-content h2 {
+  font-size: 1.5rem !important;
+  line-height: 2rem !important;
+  font-weight: 700 !important;
+  margin-top: 3rem !important;
+  margin-bottom: 1rem !important;
+  padding-bottom: 0.5rem !important;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--foreground) !important;
+  scroll-margin-top: 90px;
+}
+
+.mdx-content h3 {
+  font-size: 1.25rem !important;
+  line-height: 1.75rem !important;
+  font-weight: 600 !important;
+  margin-top: 2rem !important;
+  margin-bottom: 0.75rem !important;
+  color: var(--foreground) !important;
+  scroll-margin-top: 90px;
+}
+
+.mdx-content h4 {
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+  color: var(--foreground) !important;
+  scroll-margin-top: 90px;
+}
+
+.mdx-content p {
+  line-height: 1.8 !important;
+  margin-bottom: 1.25rem !important;
+  color: color-mix(in srgb, var(--foreground) 80%, transparent) !important;
+}
+
+.mdx-content ul {
+  list-style-type: disc !important;
+  padding-left: 1.625rem !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 1.25rem !important;
+  color: color-mix(in srgb, var(--foreground) 80%, transparent) !important;
+  line-height: 1.8 !important;
+}
+
+.mdx-content ol {
+  list-style-type: decimal !important;
+  padding-left: 1.625rem !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 1.25rem !important;
+  color: color-mix(in srgb, var(--foreground) 80%, transparent) !important;
+  line-height: 1.8 !important;
+}
+
+.mdx-content li {
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.mdx-content li::marker {
+  color: var(--muted-foreground) !important;
+  font-weight: 600 !important;
+}
+
+/* ── Docs: Code Blocks ───────────────────────────────── */
+.mdx-content pre,
+.mdx-content pre[class*="language-"] {
+  position: relative;
+  overflow-x: auto;
+  background-color: var(--nsb-code-bg) !important;
+  border: 1px solid var(--nsb-code-border) !important;
+  border-radius: 12px !important;
+  padding: 1.5rem !important;
+  margin: 1.5rem 0 !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+}
+
+.mdx-content pre code {
+  background: transparent !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-size: 0.85rem !important;
+  line-height: 1.75 !important;
+  color: var(--nsb-code-text) !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+}
+
+/* ── Docs: Inline Code ───────────────────────────────── */
+.mdx-content :not(pre) > code {
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 0.8em;
+  background: var(--muted);
+  color: var(--foreground);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* ── Docs: Callout / Blockquote ──────────────────────── */
+.mdx-content blockquote {
+  border-left: 3px solid var(--primary);
+  background: color-mix(in srgb, var(--primary) 6%, transparent);
+  border-radius: 0 8px 8px 0;
+  padding: 0.75rem 1.25rem;
+  margin: 1.5rem 0;
+  font-style: normal;
+}
+
+/* ── Docs: Tables ────────────────────────────────────── */
+.mdx-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin: 1.5rem 0;
+}
+
+.mdx-content th {
+  background: var(--muted) !important;
+  font-weight: 700 !important;
+  padding: 0.6rem 1rem !important;
+  text-align: left !important;
+  border-bottom: 2px solid var(--border) !important;
+  color: var(--foreground) !important;
+}
+
+.mdx-content td {
+  padding: 0.6rem 1rem !important;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--foreground) !important;
+}
+
+/* ── Custom scrollbar (sidebar, toc) ─────────────────── */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 99px;
+}
+
