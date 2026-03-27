@@ -11,12 +11,19 @@ interface DocsPageProps {
   params: Promise<{ slug?: string[] }>;
 }
 
+// Force Next.js to fully bake these pages as completely static files
+// to prevent Vercel Serverless environment runtime caching/rendering failures.
+export const dynamicParams = false;
+
 // Ordered doc slugs for prev/next navigation
 const DOC_ORDER = ['introduction', 'installation', 'usage', 'configuration', 'running'];
 
 export async function generateStaticParams() {
   const docs = getAllDocs();
-  return docs.map((doc) => ({ slug: [doc.slug] }));
+  return [
+    { slug: [] }, // Fixes the root `/docs` 404 error redirect fallback
+    ...docs.map((doc) => ({ slug: [doc.slug] })),
+  ];
 }
 
 export async function generateMetadata({ params }: DocsPageProps): Promise<Metadata> {
