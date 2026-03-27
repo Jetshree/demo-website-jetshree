@@ -2,11 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
-// OLD PATH (caused Vercel 404s because it was outside the repo):
-// const DOCS_DIRECTORY = path.join(process.cwd(), '../nsb/docs');
-
-// NEW PATH (fetches exactly from the local nsb-website/docs folder):
-const DOCS_DIRECTORY = path.join(process.cwd(), 'docs');
+// Using direct local string logic for Vercel traversal instead of process.cwd()
+const DOCS_DIRECTORY = './docs';
 
 export interface DocMetadata {
   title: string;
@@ -16,6 +13,7 @@ export interface DocMetadata {
 
 export function getAllDocs(): DocMetadata[] {
   if (!fs.existsSync(DOCS_DIRECTORY)) {
+    console.error("Vercel/NextJS Build Error: Missing docs directory at", DOCS_DIRECTORY);
     return [];
   }
 
@@ -23,7 +21,7 @@ export function getAllDocs(): DocMetadata[] {
   return files
     .filter((file) => file.endsWith('.mdx') || file.endsWith('.md'))
     .map((file) => {
-      const filePath = path.join(DOCS_DIRECTORY, file);
+      const filePath = `${DOCS_DIRECTORY}/${file}`;
       const fileContent = fs.readFileSync(filePath, 'utf8');
       const { data } = matter(fileContent);
       return {
@@ -35,8 +33,8 @@ export function getAllDocs(): DocMetadata[] {
 }
 
 export function getDocBySlug(slug: string) {
-  const mdxPath = path.join(DOCS_DIRECTORY, `${slug}.mdx`);
-  const mdPath = path.join(DOCS_DIRECTORY, `${slug}.md`);
+  const mdxPath = `${DOCS_DIRECTORY}/${slug}.mdx`;
+  const mdPath = `${DOCS_DIRECTORY}/${slug}.md`;
   
   const filePath = fs.existsSync(mdxPath) ? mdxPath : fs.existsSync(mdPath) ? mdPath : null;
 
@@ -53,6 +51,7 @@ export function getDocBySlug(slug: string) {
       description: data.description || '',
       slug,
     },
-    content,
+    // Fix CRLF issues causing MDX parsing to break formatting
+    content: content.replace(/\r\n/g, '\n'),
   };
 }
