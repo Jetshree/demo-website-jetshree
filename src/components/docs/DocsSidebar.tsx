@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronRight, X, Menu } from 'lucide-react';
@@ -100,16 +100,14 @@ export function DocsSidebarMobile() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    const handleToggle = () => setOpen(prev => !prev);
+    window.addEventListener('toggle-docs-sidebar', handleToggle);
+    return () => window.removeEventListener('toggle-docs-sidebar', handleToggle);
+  }, []);
+
   return (
     <>
-      {/* Mobile toggle button */}
-      <button
-        onClick={() => setOpen(true)}
-        className="lg:hidden fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-3 shadow-xl text-sm font-semibold"
-      >
-        <Menu size={18} /> Menu
-      </button>
-
       {/* Backdrop */}
       {open && (
         <div

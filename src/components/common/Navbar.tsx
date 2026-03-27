@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Network, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ThemeToggle } from './ThemeToggle';
 import { GithubIcon } from './GithubIcon';
@@ -25,10 +25,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="p-1.5 bg-primary/10 rounded-lg">
-              <Network size={24} className="text-primary" />
-            </div>
+          <Link href="/" className="flex items-center">
             <span className="text-xl font-bold tracking-tight">NSB</span>
           </Link>
 
@@ -58,7 +55,16 @@ const Navbar = () => {
           </div>
 
           {/* Mobile menu and theme toggle */}
-          <div className="md:hidden flex items-center space-x-2">
+          <div className="md:hidden flex items-center space-x-1">
+            {pathname.startsWith('/docs') && (
+              <button
+                onClick={() => window.dispatchEvent(new Event('toggle-docs-sidebar'))}
+                className="flex items-center gap-1.5 rounded-full bg-primary text-primary-foreground px-3 py-1.5 shadow-sm text-xs font-semibold hover:bg-primary/90 transition-colors"
+                title="Open Docs Menu"
+              >
+                Docs
+              </button>
+            )}
             <ThemeToggle />
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -75,7 +81,7 @@ const Navbar = () => {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="md:hidden glass border-b absolute top-16 left-0 right-0 py-4 px-4 space-y-2 flex flex-col items-center shadow-lg"
+          className="md:hidden bg-background/95 backdrop-blur-xl border-b absolute top-16 left-0 right-0 py-8 px-4 space-y-4 flex flex-col items-center shadow-2xl z-50"
         >
           {navLinks.map((link) => (
             <Link

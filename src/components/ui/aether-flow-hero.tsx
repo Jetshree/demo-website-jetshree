@@ -199,19 +199,6 @@ const AetherFlowHero = () => {
             <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
             
             <div className="relative z-10 text-center p-6 max-w-5xl mx-auto">
-                <motion.div
-                    custom={0}
-                    variants={fadeUpVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-10 backdrop-blur-sm"
-                >
-                    <Zap className="h-4 w-4 text-primary" />
-                    <span className="text-sm font-medium text-foreground/80 tracking-wide">
-                        Network Simulation Framework
-                    </span>
-                </motion.div>
-
                 <motion.h1
                     custom={1}
                     variants={fadeUpVariants}

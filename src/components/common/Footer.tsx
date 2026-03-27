@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Network, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import Link from 'next/link';
 import { GithubIcon } from './GithubIcon';
 
@@ -12,8 +12,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Logo and info */}
           <div className="md:col-span-1 space-y-4">
-            <Link href="/" className="flex items-center space-x-2">
-              <Network size={24} className="text-primary" />
+            <Link href="/" className="flex items-center">
               <span className="text-xl font-bold">NSB</span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">

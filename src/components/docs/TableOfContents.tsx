@@ -115,14 +115,6 @@ export function TableOfContents() {
         >
           ↑ Scroll to top
         </a>
-        <a
-          href="https://github.com/Jetshree/nsb"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block text-xs text-muted-foreground hover:text-primary transition-colors"
-        >
-          Edit this page on GitHub →
-        </a>
       </div>
     </nav>
   );

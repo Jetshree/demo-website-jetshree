@@ -1,88 +1,243 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Target, Car, Blocks, Rocket, Shield, HardDrive } from 'lucide-react';
+import type { LucideIcon } from "lucide-react";
+import { Target, Car, Blocks, Rocket, Shield, HardDrive } from "lucide-react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useRef, useState } from "react";
+import { cn } from "@/lib/utils";
 
-const Features = () => {
-  const features = [
-    {
-      title: "Multi-Language Support",
-      desc: "Full feature parity between Python and C++ client libraries.",
-      icon: <Blocks className="w-12 h-12 text-primary" />,
-    },
-    {
-      title: "Real-time Processing",
-      desc: "Low-overhead message passing with high-throughput Redis backing.",
-      icon: <Rocket className="w-12 h-12 text-blue-500" />,
-    },
-    {
-      title: "Extensible Core",
-      desc: "Modular architecture to support new simulators and application types.",
-      icon: <HardDrive className="w-12 h-12 text-emerald-500" />,
-    },
-  ];
+// ─── Constants ──────────────────────────────────────────────────────────────────
 
-  const useCases = [
-    {
-      title: "Autonomous Vehicles",
-      desc: "Model V2V and V2X communication in large-scale simulation worlds.",
-      icon: <Car className="w-8 h-8 text-primary" />,
-    },
-    {
-      title: "Distributed Systems",
-      desc: "Simulate real-world network failures and latencies in cluster environments.",
-      icon: <Target className="w-8 h-8 text-orange-500" />,
-    },
-    {
-      title: "Federated Learning",
-      desc: "Model decentralized training across varying network topologies.",
-      icon: <Shield className="w-8 h-8 text-emerald-500" />,
-    },
-  ];
+const TILT_MAX = 9;
+const TILT_SPRING = { stiffness: 300, damping: 28 } as const;
+const GLOW_SPRING = { stiffness: 180, damping: 22 } as const;
+
+// ─── Data ────────────────────────────────────────────────────────────────────────
+
+export interface SpotlightItem {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  color: string;
+}
+
+const NSB_ITEMS: SpotlightItem[] = [
+  {
+    icon: Blocks,
+    title: "Multi-Language",
+    description: "Full feature parity between Python and C++ client libraries.",
+    color: "#8b5cf6",
+  },
+  {
+    icon: Rocket,
+    title: "Real-time Processing",
+    description: "Low-overhead message passing with high-throughput Redis backing.",
+    color: "#3b82f6",
+  },
+  {
+    icon: HardDrive,
+    title: "Extensible Core",
+    description: "Modular architecture to support new simulators and application types.",
+    color: "#10b981",
+  },
+  {
+    icon: Car,
+    title: "Autonomous Vehicles",
+    description: "Model V2V and V2X communication in large-scale simulation worlds.",
+    color: "#f59e0b",
+  },
+  {
+    icon: Target,
+    title: "Distributed Systems",
+    description: "Simulate real-world network failures and latencies in cluster environments.",
+    color: "#f97316",
+  },
+  {
+    icon: Shield,
+    title: "Federated Learning",
+    description: "Model decentralized training across varying network topologies.",
+    color: "#14b8a6",
+  },
+];
+
+// ─── Card ────────────────────────────────────────────────────────────────────────
+
+interface CardProps {
+  item: SpotlightItem;
+  dimmed: boolean;
+  onHoverStart: () => void;
+  onHoverEnd: () => void;
+}
+
+function Card({ item, dimmed, onHoverStart, onHoverEnd }: CardProps) {
+  const Icon = item.icon;
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const normX = useMotionValue(0.5);
+  const normY = useMotionValue(0.5);
+
+  const rawRotateX = useTransform(normY, [0, 1], [TILT_MAX, -TILT_MAX]);
+  const rawRotateY = useTransform(normX, [0, 1], [-TILT_MAX, TILT_MAX]);
+
+  const rotateX = useSpring(rawRotateX, TILT_SPRING);
+  const rotateY = useSpring(rawRotateY, TILT_SPRING);
+  const glowOpacity = useSpring(0, GLOW_SPRING);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = cardRef.current;
+    if (!el) {
+      return;
+    }
+    const rect = el.getBoundingClientRect();
+    normX.set((e.clientX - rect.left) / rect.width);
+    normY.set((e.clientY - rect.top) / rect.height);
+  };
+
+  const handleMouseEnter = () => {
+    glowOpacity.set(1);
+    onHoverStart();
+  };
+
+  const handleMouseLeave = () => {
+    normX.set(0.5);
+    normY.set(0.5);
+    glowOpacity.set(0);
+    onHoverEnd();
+  };
 
   return (
-    <section className="py-24 bg-background">
+    <motion.div
+      animate={{
+        scale: dimmed ? 0.96 : 1,
+      }}
+      className={cn(
+        "group relative flex flex-col gap-5 overflow-hidden rounded-2xl border pl-6 pr-6 pt-6 pb-6",
+        // Light
+        "bg-white shadow-[0_4px_20px_rgba(0,0,0,0.06)]",
+        // Dark
+        "dark:bg-white/5 dark:shadow-none",
+        "transition-all duration-300"
+      )}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onMouseMove={handleMouseMove}
+      ref={cardRef}
+      style={{
+        rotateX,
+        rotateY,
+        transformPerspective: 900,
+        borderColor: `${item.color}B0`, // Clearly visible border with reduced transparency
+      }}
+      transition={{ duration: 0.18, ease: "easeOut" }}
+    >
+      {/* Static accent tint — always visible */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 rounded-2xl"
+        style={{
+          background: `radial-gradient(ellipse at 20% 20%, ${item.color}14, transparent 65%)`,
+        }}
+      />
+
+      {/* Hover glow layer */}
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 rounded-2xl"
+        style={{
+          opacity: glowOpacity,
+          background: `radial-gradient(ellipse at 20% 20%, ${item.color}2e, transparent 65%)`,
+        }}
+      />
+
+      {/* Shimmer sweep */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 left-0 w-[55%] -translate-x-full -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[280%]"
+      />
+
+      {/* Icon badge */}
+      <div
+        className="relative z-10 flex h-10 w-10 items-center justify-center rounded-xl"
+        style={{
+          background: `${item.color}18`,
+          boxShadow: `inset 0 0 0 1px ${item.color}30`,
+        }}
+      >
+        <Icon size={17} strokeWidth={1.9} style={{ color: item.color }} />
+      </div>
+
+      {/* Text */}
+      <div className="relative z-10 flex flex-col gap-2">
+        <h3 className="font-semibold text-[15px] text-foreground tracking-tight">
+          {item.title}
+        </h3>
+        <p className="text-[13px] text-muted-foreground leading-relaxed">
+          {item.description}
+        </p>
+      </div>
+
+      {/* Accent bottom line */}
+      <div
+        aria-hidden="true"
+        className="absolute bottom-0 left-0 h-[2px] w-0 rounded-full transition-all duration-500 group-hover:w-full"
+        style={{
+          background: `linear-gradient(to right, ${item.color}80, transparent)`,
+        }}
+      />
+    </motion.div>
+  );
+}
+
+Card.displayName = "Card";
+
+// ─── Main export ──────────────────────────────────────────────────────────────────
+
+export interface SpotlightCardsProps {
+  items?: SpotlightItem[];
+  eyebrow?: string;
+  heading?: string;
+  className?: string;
+}
+
+export function SpotlightCards({
+  items = NSB_ITEMS,
+  eyebrow = "Features & Use Cases",
+  heading = "Everything you need",
+  className,
+}: SpotlightCardsProps) {
+  const [hoveredTitle, setHoveredTitle] = useState<string | null>(null);
+
+  return (
+    <section className="pb-24 pt-12 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-24">
-          {features.map((feature) => (
-            <div key={feature.title} className="p-8 rounded-3xl border hover:shadow-2xl hover:border-primary/20 transition-all group">
-              <div className="mb-6 p-4 bg-muted/50 rounded-2xl w-fit group-hover:bg-primary/5 transition-colors">
-                {feature.icon}
-              </div>
-              <h3 className="text-2xl font-bold mb-4">{feature.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                {feature.desc}
-              </p>
-            </div>
-          ))}
+
+        {/* Header */}
+        <div className="relative mb-12 flex flex-col gap-1.5 text-center">
+          <p className="font-semibold text-[10px] text-primary uppercase tracking-[0.22em]">
+            {eyebrow}
+          </p>
+          <h2 className="font-extrabold text-[32px] md:text-[40px] text-foreground tracking-tight">
+            {heading}
+          </h2>
         </div>
 
-        {/* Use Cases Section */}
-        <div className="bg-primary/5 py-12 px-8 rounded-[40px] border border-primary/10">
-          <div className="text-center mb-16">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-primary mb-3">Use Cases</h3>
-            <h2 className="text-4xl font-extrabold">Where NSB Shines</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {useCases.map((useCase) => (
-              <div key={useCase.title} className="glass p-8 rounded-3xl flex flex-col items-center text-center">
-                <div className="mb-4 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-full shadow-sm">
-                  {useCase.icon}
-                </div>
-                <h4 className="text-xl font-bold mb-2">{useCase.title}</h4>
-                <p className="text-muted-foreground text-sm">
-                  {useCase.desc}
-                </p>
-              </div>
-            ))}
-          </div>
+        {/* Card grid */}
+        <div className="relative grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((item) => (
+            <Card
+              dimmed={hoveredTitle !== null && hoveredTitle !== item.title}
+              item={item}
+              key={item.title}
+              onHoverEnd={() => setHoveredTitle(null)}
+              onHoverStart={() => setHoveredTitle(item.title)}
+            />
+          ))}
         </div>
       </div>
     </section>
   );
-};
+}
 
-export default Features;
+export default function Features() {
+  return <SpotlightCards items={NSB_ITEMS} eyebrow="Features & Use Cases" heading="Where NSB Shines" />;
+}
