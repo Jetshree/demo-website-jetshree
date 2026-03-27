@@ -25,13 +25,13 @@ const NSB_ITEMS: SpotlightItem[] = [
   {
     icon: Blocks,
     title: "Multi-Language",
-    description: "Full feature parity between Python and C++ client libraries.",
+    description: "Client libraries available in Python and C++ for easy integration.",
     color: "#8b5cf6",
   },
   {
     icon: Rocket,
     title: "Real-time Processing",
-    description: "Low-overhead message passing with high-throughput Redis backing.",
+    description: "Efficient message-driven communication between applications and simulators.",
     color: "#3b82f6",
   },
   {
@@ -43,19 +43,19 @@ const NSB_ITEMS: SpotlightItem[] = [
   {
     icon: Car,
     title: "Autonomous Vehicles",
-    description: "Model V2V and V2X communication in large-scale simulation worlds.",
+    description: "Simulate V2V and V2X communication in controlled network environments.",
     color: "#f59e0b",
   },
   {
     icon: Target,
     title: "Distributed Systems",
-    description: "Simulate real-world network failures and latencies in cluster environments.",
+    description: "Evaluate distributed applications under realistic network conditions.",
     color: "#f97316",
   },
   {
     icon: Shield,
-    title: "Federated Learning",
-    description: "Model decentralized training across varying network topologies.",
+    title: "IoT & Edge Systems",
+    description: "Analyze application behavior across IoT and edge network environments.",
     color: "#14b8a6",
   },
 ];

@@ -74,7 +74,7 @@ export function TimelineEvent({
 }) {
   // Use lucide-react mapping to match the dynamic structure while staying in the NSB domain
   const Icon = (LucideIcons as any)[icon.name] || LucideIcons.HelpCircle;
-  
+
   return (
     <div className="group relative -m-2 flex gap-4 border border-transparent p-2">
       <div className="relative">
@@ -113,7 +113,7 @@ interface Event {
 const nsbTimeline = [
   {
     label: "Application Call",
-    message: "Your application sends a message via the NsbAppClient interface (available in Python or C++).",
+    message: "Applications send messages using NSB client APIs.",
     icon: {
       name: "Cpu",
       textColor: "text-blue-500",
@@ -121,8 +121,8 @@ const nsbTimeline = [
     },
   },
   {
-    label: "Daemon Bridge",
-    message: "The NSB Daemon receives the message and stores it in the high-performance Redis-backed payload server.",
+    label: "Core Services",
+    message: "The NSB core service manages message exchange between applications and simulators.",
     icon: {
       name: "Layers",
       textColor: "text-purple-500",
@@ -130,8 +130,8 @@ const nsbTimeline = [
     },
   },
   {
-    label: "Simulator Routing",
-    message: "The Network Simulator fetches payloads using NsbSimClient and simulates real-world delays and drops.",
+    label: "Network Simulation",
+    message: "The simulator processes messages under realistic network conditions.",
     icon: {
       name: "Zap",
       textColor: "text-amber-500",
@@ -140,7 +140,7 @@ const nsbTimeline = [
   },
   {
     label: "Message Arrival",
-    message: "Once delivery conditions are met, the destination application receives the message as if over a real network.",
+    message: "The destination application receives the message after simulation is applied.",
     icon: {
       name: "CheckCircle2",
       textColor: "text-emerald-500",
