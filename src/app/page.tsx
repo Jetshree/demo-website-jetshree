@@ -1,6 +1,6 @@
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
-import AetherFlowHero from '@/components/ui/aether-flow-hero';
+import StripeHero from '@/components/landing/StripeHero';
 // import { HeroGeometric } from '@/components/ui/shape-landing-hero';
 import HowItWorks from '@/components/landing/HowItWorks';
 import Features from '@/components/landing/Features';
@@ -11,7 +11,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-grow">
-        <AetherFlowHero />
+        <StripeHero />
         <HowItWorks />
         <Features />
         <CTA />
