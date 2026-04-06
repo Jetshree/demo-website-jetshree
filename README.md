@@ -66,12 +66,7 @@ This is an **early-stage prototype for the NSB (Network Simulation Bridge) proje
 - 📋 GitHub synchronization (planned)
 - 📋 Full page implementations (Home, Docs, Tutorials, Research, Use Cases)
 
-### 🎯 Design Philosophy
-
-The prototype is structured to support three core user journeys:
-- **Discovery** – Understanding what NSB is (homepage/intro)
-- **Implementation** – Installing and using NSB (docs/tutorials)
-- **Contribution** – Getting involved in development
+### Design Philosophy
 
 The MDX-based content system is specifically designed to evolve-documentation files can be updated in the NSB repository and automatically reflected on the website through the planned GitHub API integration (details described in proposal).
 Final design and architecture will be finalized after discussion with mentor. This prototype is deployed on vercel (under hobby plan), the final website is recommended to be deployed on netlify (reasons and comparison mentioned in proposal).
